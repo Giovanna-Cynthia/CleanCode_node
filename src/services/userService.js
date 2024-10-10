@@ -1,4 +1,4 @@
-const User = require("../models/index");
+const User = require("../models/user");
 const { trace } = require("../routers/router");
 
 //app.js -> router.js -> userRouter.js -> userController.js
