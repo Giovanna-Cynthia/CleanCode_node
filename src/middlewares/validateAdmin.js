@@ -1,32 +1,34 @@
 const validateAdmin = (req, res, next) => {
-const { nome, email, senha } = req.body;
+    const { nome, email, senha } = req.body;
 
-if (!nome || typeof nome !== 'string') {
-    
-    return res.status(400).json({msg: 'Campos inválidos'});
-}
+    if (!nome || typeof nome !== 'string') {
 
-if (!email || typeof email !== 'string') {
-    return res.status(400).json({msg: 'Campos inválidos'})
-}
+        return res.status(400).json({ msg: 'Campos inválidos' });
+    }
 
-if (email.includes("@") && email.includes(".")) {
-    return res.status(400).json({msg: 'Campo email inválido'})
-}
+    if (!email || typeof email !== 'string') {
+        return res.status(400).json({ msg: 'Campos inválidos' })
+    }
 
-if (!senha || typeof senha !== 'string') {
-    return res.status(400).json({msg: 'Campos inválidos'})
-}
+    if (!(email.includes("@") && email.includes("."))) {
+        return res.status(400).json({msg: 'Campo email inválido'})
+    } 
 
-next();
+    if (!senha || typeof senha !== 'string') {
+        return res.status(400).json({ msg: 'Campos inválidos' })
+    }
+
+    next();
 }
 
 const validateAdminId = (req, res, next) => {
-const { id } = req.params;
+    const { id } = req.params;
 
-if (!id || typeof id !== 'string' ) {
-    return res.status(400).json({msg: 'Parametro ID ivalido'});
+    if (!id || typeof id !== 'string') {
+        return res.status(400).json({ msg: 'Parametro ID ivalido' });
+    }
+
+    next();
 }
 
-next();
-}
+module.exports = { validateAdmin, validateAdminId };
