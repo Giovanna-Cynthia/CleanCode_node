@@ -10,6 +10,18 @@ const adminService = {
             throw new Error('Ocorreu um erro ao criar usuario');
         }
     },
+    esqueciSenha: async (id, novaSenha) => {
+        try {
+          const admin = await Admin.findByPk(id);
+          if (!admin) {
+            return null;
+          }
+          await admin.update({ senha: novaSenha });
+          return admin;
+        } catch (error) {
+          throw new Error("Ocorreu um erro ao trocar a senha do Admin");
+        }
+      },
     update: async (id, adminToUpdate) => {
         try{
             const admin = await Admin.findByPk(id);

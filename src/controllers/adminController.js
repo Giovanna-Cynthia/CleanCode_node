@@ -1,13 +1,14 @@
 const adminService = require("../services/adminService");
-const bcrypt = require('bcryptjs'); 
+const bcrypt = require('bcrypt'); 
 const jwt = require('jsonwebtoken');
+const Admin = require("../models/admin");
 
 const adminController = {
     login: async (req, res) => {
         try{
             const { email, senha } = req.body;
             
-            const admin = await admin.findOne({ where: {email } });
+            const admin = await Admin.findOne({ where: {email } });
 
             if(!admin) {
                 return res.status(400).json({
@@ -22,12 +23,14 @@ const adminController = {
                 });
             };
 
-            const token = jwt.sign({ email: admin.email, 
-                name: admin.nome 
-            }, process.env.SECRET, {expiresIn: '1h'});
+            const token = jwt.sign(
+                {email: admin.email, nome: admin.nome }, 
+                process.env.SECRET, 
+                {expiresIn: "1h"}
+            );
 
             return res.status(200).json({
-                msg: 'Login realizado!',
+                msg: 'Login realizado!',  
                 token
             })
         } catch(error) {
@@ -37,18 +40,42 @@ const adminController = {
     },
     create: async (req, res) => {
         try{
-            console.log("passou aqui")
-            const admin = await adminService.create(req.body);
-            return res.status(201).json({
-                msg: 'Administrador criado com sucesso',
-                admin
+            const {nome, senha, email} = req.body;
+                                            
+            const hashSenha = await bcrypt.hash(senha, 10)
+
+            const adminCriado = await Admin.create({nome, senha: hashSenha, email});
+            
+
+            return res.status(200).json({
+                msg: "Administrador criado com sucesso!",
+                user: adminCriado
             })
         } catch (error) {
-            return res.status(500).json({
-                msg: 'Erro ao tentar criar o administrador'
-            })
+            console.error(error);
+            return res.status(500).json({ msg: "Acione o Suporte"});
         }
     },
+
+    esqueciSenha: async (req, res) => {
+        try {
+          const admin = await adminService.esqueciSenha(  req.body);
+          if (!admin) {
+            return res.status(400).json({
+              msg: "Admin nao encontrado",
+            });
+          }
+          return res.status(200).json({
+            msg: "Senha do admin foi atualizada com sucesso",
+            admin,
+          });
+        } catch (error) {
+          return res.status(500).json({
+            msg: "Erro ao atualizar o Admin",
+          });
+        }
+      },
+
     update: async (req, res) => {
         try{
             const admin = await adminService.update(req.params.id, req.body);

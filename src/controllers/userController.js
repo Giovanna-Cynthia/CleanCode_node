@@ -3,7 +3,6 @@ const userService = require("../services/userService")
 const userController = {
     create: async (req, res) => {
         try{
-            console.log("passou aqui")
             const user = await userService.create(req.body);
             return res.status(201).json({
                 msg: 'Usuario criado com sucesso',
